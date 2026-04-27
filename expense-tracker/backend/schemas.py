@@ -12,18 +12,32 @@ class UserCreate(BaseModel):
 class UserOut(BaseModel):
     id: int
     email: str
+    totp_enabled: bool
 
     model_config = {"from_attributes": True}
-
-
-class Token(BaseModel):
-    access_token: str
-    token_type: str
 
 
 class LoginRequest(BaseModel):
     email: str
     password: str
+
+
+class ResendVerification(BaseModel):
+    email: str
+
+
+class TwoFAVerifySetup(BaseModel):
+    secret: str
+    code: str
+
+
+class TwoFADisable(BaseModel):
+    code: str
+
+
+class TwoFALoginVerify(BaseModel):
+    pre_auth_token: str
+    code: str
 
 
 class ExpenseCreate(BaseModel):

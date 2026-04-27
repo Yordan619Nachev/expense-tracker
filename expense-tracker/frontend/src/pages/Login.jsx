@@ -20,8 +20,13 @@ function parseError(err) {
 export default function Login() {
   const [form, setForm] = useState({ email: '', password: '' })
   const [error, setError] = useState('')
+  const [unverified, setUnverified] = useState(false)
+  const [resendSent, setResendSent] = useState(false)
   const [loading, setLoading] = useState(false)
   const [pwFocused, setPwFocused] = useState(false)
+  const [twoFAStep, setTwoFAStep] = useState(false)
+  const [preAuthToken, setPreAuthToken] = useState('')
+  const [otpCode, setOtpCode] = useState('')
   const { login } = useAuth()
   const navigate = useNavigate()
 
@@ -34,15 +39,92 @@ export default function Login() {
     if (!allMet) return
     setLoading(true)
     setError('')
+    setUnverified(false)
     try {
       const { data } = await api.post('/auth/login', form)
-      login(data.access_token)
+      if (data.requires_2fa) {
+        setPreAuthToken(data.pre_auth_token)
+        setTwoFAStep(true)
+      } else {
+        const { data: userData } = await api.get('/auth/me')
+        login(userData)
+        navigate('/dashboard')
+      }
+    } catch (err) {
+      if (err.response?.status === 403) {
+        setUnverified(true)
+      } else {
+        setError(parseError(err))
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleResend = async () => {
+    await api.post('/auth/resend-verification', { email: form.email })
+    setResendSent(true)
+  }
+
+  const handleVerify2FA = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    setError('')
+    try {
+      await api.post('/auth/2fa/verify', { pre_auth_token: preAuthToken, code: otpCode })
+      const { data: userData } = await api.get('/auth/me')
+      login(userData)
       navigate('/dashboard')
     } catch (err) {
       setError(parseError(err))
     } finally {
       setLoading(false)
     }
+  }
+
+  if (twoFAStep) {
+    return (
+      <div className="auth-wrapper">
+        <div className="card auth-card">
+          <h1>Two-factor auth</h1>
+          <p>Enter the 6-digit code from your authenticator app</p>
+          <form onSubmit={handleVerify2FA}>
+            <div className="form-group">
+              <label className="form-label">Authentication code</label>
+              <input
+                className="form-input"
+                type="text"
+                inputMode="numeric"
+                maxLength={6}
+                value={otpCode}
+                onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
+                placeholder="000000"
+                autoFocus
+                required
+              />
+            </div>
+            {error && <p className="form-error">{error}</p>}
+            <button
+              type="submit"
+              className="btn btn-primary"
+              style={{ width: '100%' }}
+              disabled={loading || otpCode.length !== 6}
+            >
+              {loading ? 'Verifying…' : 'Verify'}
+            </button>
+          </form>
+          <p className="auth-link">
+            <button
+              className="btn btn-ghost btn-sm"
+              style={{ marginTop: 8 }}
+              onClick={() => { setTwoFAStep(false); setOtpCode(''); setError('') }}
+            >
+              ← Back
+            </button>
+          </p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -83,6 +165,19 @@ export default function Login() {
               </ul>
             )}
           </div>
+
+          {unverified && (
+            <div style={{ marginBottom: 12, padding: '10px 12px', background: 'var(--bg)', borderRadius: 7, border: '1px solid var(--border)' }}>
+              <p style={{ color: 'var(--danger)', fontSize: 13, marginBottom: 8 }}>
+                Your email address has not been verified yet.
+              </p>
+              {resendSent
+                ? <p style={{ color: 'var(--success)', fontSize: 13 }}>Verification email resent!</p>
+                : <button type="button" className="btn btn-ghost btn-sm" onClick={handleResend}>Resend verification email</button>
+              }
+            </div>
+          )}
+
           {error && <p className="form-error">{error}</p>}
           <button
             type="submit"

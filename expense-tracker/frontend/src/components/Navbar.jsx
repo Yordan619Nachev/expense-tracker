@@ -27,7 +27,7 @@ export default function Navbar() {
         <NavLink to="/expenses" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
           Expenses
         </NavLink>
-        <button className="btn btn-ghost btn-sm" onClick={() => setDark((d) => !d)}>
+<button className="btn btn-ghost btn-sm" onClick={() => setDark((d) => !d)}>
           {dark ? '☀ Light' : '☾ Dark'}
         </button>
         <button className="btn btn-ghost btn-sm" onClick={handleLogout}>Logout</button>
