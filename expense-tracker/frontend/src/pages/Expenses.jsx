@@ -111,8 +111,8 @@ export default function Expenses() {
         )}
       </div>
 
-      {showForm && <ExpenseForm onSubmit={handleCreate} onClose={() => setShowForm(false)} />}
-      {editing && <ExpenseForm initial={editing} onSubmit={handleUpdate} onClose={() => setEditing(null)} />}
+      {showForm && <ExpenseForm key="create" onSubmit={handleCreate} onClose={() => setShowForm(false)} />}
+      {editing && <ExpenseForm key={editing.id} initial={editing} onSubmit={handleUpdate} onClose={() => setEditing(null)} />}
     </div>
   )
 }
