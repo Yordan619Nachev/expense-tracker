@@ -47,16 +47,16 @@ export default function Dashboard() {
         <div className="grid-3">
           <div className="card">
             <div className="card-title">Total this month</div>
-            <div className="card-value">${totalMonth.toFixed(2)}</div>
+            <div className="card-value">€{totalMonth.toFixed(2)}</div>
           </div>
           <div className="card">
             <div className="card-title">Daily average</div>
-            <div className="card-value">${avgDaily.toFixed(2)}</div>
+            <div className="card-value">€{avgDaily.toFixed(2)}</div>
           </div>
           <div className="card">
             <div className="card-title">Top category</div>
             <div className="card-value" style={{ fontSize: 20 }}>
-              {topCategory ? `${topCategory.category} ($${topCategory.total})` : '—'}
+              {topCategory ? `${topCategory.category} (€${topCategory.total})` : '—'}
             </div>
           </div>
         </div>
@@ -72,7 +72,7 @@ export default function Dashboard() {
                   <Pie data={summary} dataKey="total" nameKey="category" cx="50%" cy="50%" outerRadius={90} label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
                     {summary.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
                   </Pie>
-                  <Tooltip formatter={(v) => `$${v.toFixed(2)}`} />
+                  <Tooltip formatter={(v) => `€${v.toFixed(2)}`} />
                 </PieChart>
               </ResponsiveContainer>
             )}
@@ -87,7 +87,7 @@ export default function Dashboard() {
                 <BarChart data={trendFormatted} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
                   <XAxis dataKey="name" tick={{ fontSize: 12 }} />
                   <YAxis tick={{ fontSize: 12 }} />
-                  <Tooltip formatter={(v) => `$${v.toFixed(2)}`} />
+                  <Tooltip formatter={(v) => `€${v.toFixed(2)}`} />
                   <Bar dataKey="total" fill="#6366f1" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
