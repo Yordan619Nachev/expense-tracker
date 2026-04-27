@@ -43,14 +43,6 @@ export default function Expenses() {
     fetchExpenses()
   }
 
-  const handleExport = () => {
-    const token = localStorage.getItem('token')
-    const params = new URLSearchParams()
-    if (filters.month) params.set('month', filters.month)
-    if (filters.year) params.set('year', filters.year)
-    window.location.href = `http://localhost:8000/expenses/export?${params}`
-  }
-
   const setFilter = (field) => (e) => setFilters((f) => ({ ...f, [field]: e.target.value }))
   const total = expenses.reduce((s, e) => s + e.amount, 0)
 
@@ -58,10 +50,7 @@ export default function Expenses() {
     <div className="page">
       <div className="page-header">
         <h1>Expenses</h1>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <button className="btn btn-ghost" onClick={handleExport}>Export CSV</button>
-          <button className="btn btn-primary" onClick={() => setShowForm(true)}>+ Add Expense</button>
-        </div>
+        <button className="btn btn-primary" onClick={() => setShowForm(true)}>+ Add Expense</button>
       </div>
 
       <div className="filter-bar">
@@ -100,7 +89,7 @@ export default function Expenses() {
                     <td style={{ color: 'var(--muted)', fontSize: 13 }}>{e.date}</td>
                     <td><span className="badge">{e.category}</span></td>
                     <td style={{ color: 'var(--muted)' }}>{e.description || '—'}</td>
-                    <td style={{ fontWeight: 600 }}>${e.amount.toFixed(2)}</td>
+                    <td style={{ fontWeight: 600 }}>€{e.amount.toFixed(2)}</td>
                     <td>
                       <div className="actions">
                         <button className="btn btn-ghost btn-sm" onClick={() => setEditing(e)}>Edit</button>
@@ -113,7 +102,7 @@ export default function Expenses() {
               <tfoot>
                 <tr>
                   <td colSpan={3} style={{ fontWeight: 600, padding: '12px' }}>Total</td>
-                  <td style={{ fontWeight: 700, fontSize: 15, padding: '12px' }}>${total.toFixed(2)}</td>
+                  <td style={{ fontWeight: 700, fontSize: 15, padding: '12px' }}>€{total.toFixed(2)}</td>
                   <td />
                 </tr>
               </tfoot>
