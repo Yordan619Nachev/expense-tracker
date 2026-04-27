@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date as Date
 from typing import Optional
 
 from pydantic import BaseModel, EmailStr
@@ -30,14 +30,14 @@ class ExpenseCreate(BaseModel):
     amount: float
     category: str
     description: Optional[str] = ""
-    date: date
+    date: Date
 
 
 class ExpenseUpdate(BaseModel):
     amount: Optional[float] = None
     category: Optional[str] = None
     description: Optional[str] = None
-    date: Optional[date] = None
+    date: Optional[Date] = None
 
 
 class ExpenseOut(BaseModel):
@@ -45,6 +45,6 @@ class ExpenseOut(BaseModel):
     amount: float
     category: str
     description: Optional[str]
-    date: date
+    date: Date
 
     model_config = {"from_attributes": True}
