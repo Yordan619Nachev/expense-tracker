@@ -2,7 +2,7 @@
 
 A full-stack personal finance application for tracking daily expenses, visualizing spending patterns, and exporting data — built with FastAPI and React.
 
-![Dashboard preview](https://placehold.co/900x450?text=Add+a+screenshot+here)
+
 
 ## Features
 
